@@ -7,194 +7,182 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-  /* ── reset & base ── */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --blue:   #185FA5;
-    --blue-l: #E6F1FB;
-    --blue-d: #0C447C;
-    --green:  #3B6D11;
-    --green-l:#EAF3DE;
-    --red:    #A32D2D;
-    --red-l:  #FCEBEB;
-    --gold:   #BA7517;
-    --gold-l: #FAEEDA;
-    --silver: #5F5E5A;
-    --silver-l:#F1EFE8;
-    --bronze: #993C1D;
-    --bronze-l:#FAECE7;
-    --bg:     #F7F7F5;
-    --surface:#FFFFFF;
-    --border: #E0DED6;
-    --text:   #1A1A18;
-    --muted:  #6B6B67;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-         background: var(--bg); color: var(--text); min-height: 100vh; }
-  .screen { display: none; }
-  .screen.active { display: block; }
-  .wrap { max-width: 480px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#185FA5;--blue-l:#E6F1FB;--blue-d:#0C447C;
+  --green:#3B6D11;--green-l:#EAF3DE;
+  --red:#A32D2D;--red-l:#FCEBEB;
+  --gold:#BA7517;--gold-l:#FAEEDA;
+  --silver:#5F5E5A;--silver-l:#F1EFE8;
+  --bronze:#993C1D;--bronze-l:#FAECE7;
+  --amber:#854F0B;--amber-l:#FAEEDA;
+  --bg:#F7F7F5;--surface:#FFFFFF;--border:#E0DED6;
+  --text:#1A1A18;--muted:#6B6B67;
+  --radius:12px;--radius-sm:8px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+     background:var(--bg);color:var(--text);min-height:100vh}
+.screen{display:none}.screen.active{display:block}
+.wrap{max-width:480px;margin:0 auto;padding:1.5rem 1rem 3rem}
 
-  /* ── cards ── */
-  .card { background: var(--surface); border: 1px solid var(--border);
-          border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+/* cards */
+.card{background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
 
-  /* ── typography ── */
-  h1 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
-  h2 { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
-  .muted { font-size: 13px; color: var(--muted); }
-  .label { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+/* typography */
+h1{font-size:20px;font-weight:600;margin-bottom:6px}
+h2{font-size:17px;font-weight:600;margin-bottom:10px}
+.muted{font-size:13px;color:var(--muted)}
 
-  /* ── buttons ── */
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-         padding: 12px 20px; font-size: 15px; font-weight: 500; border-radius: var(--radius-sm);
-         border: 1px solid var(--border); background: var(--surface); color: var(--text);
-         cursor: pointer; width: 100%; margin-bottom: 8px; transition: opacity .15s; }
-  .btn:active { opacity: .75; }
-  .btn-primary { background: var(--blue); border-color: var(--blue); color: #fff; }
-  .btn-danger  { background: var(--red);  border-color: var(--red);  color: #fff; }
-  .btn-sm { padding: 8px 16px; font-size: 13px; width: auto; margin-bottom: 0; }
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+     padding:12px 20px;font-size:15px;font-weight:500;border-radius:var(--radius-sm);
+     border:1px solid var(--border);background:var(--surface);color:var(--text);
+     cursor:pointer;width:100%;margin-bottom:8px;transition:opacity .15s}
+.btn:active{opacity:.75}
+.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn-danger{background:var(--red);border-color:var(--red);color:#fff}
+.btn-sm{padding:8px 16px;font-size:13px;width:auto;margin-bottom:0}
 
-  /* ── inputs ── */
-  input[type=text] { width: 100%; padding: 12px 14px; font-size: 16px;
-                     border: 1px solid var(--border); border-radius: var(--radius-sm);
-                     background: var(--surface); color: var(--text); margin-bottom: 12px; }
-  input[type=text]:focus { outline: none; border-color: var(--blue); }
+/* inputs */
+input[type=text]{width:100%;padding:12px 14px;font-size:16px;
+                 border:1px solid var(--border);border-radius:var(--radius-sm);
+                 background:var(--surface);color:var(--text);margin-bottom:12px}
+input[type=text]:focus{outline:none;border-color:var(--blue)}
 
-  /* ── quiz options ── */
-  .opt { width: 100%; text-align: left; padding: 13px 16px; font-size: 15px;
-         border: 1px solid var(--border); border-radius: var(--radius-sm);
-         background: var(--surface); color: var(--text); cursor: pointer;
-         margin-bottom: 8px; line-height: 1.4; transition: background .12s; }
-  .opt:active:not(:disabled) { background: var(--bg); }
-  .opt.correct { background: var(--green-l); border-color: var(--green); color: var(--green); }
-  .opt.wrong   { background: var(--red-l);   border-color: var(--red);   color: var(--red); }
-  .opt.reveal  { background: var(--green-l); border-color: var(--green); color: var(--green); }
+/* quiz options */
+.opt{width:100%;text-align:left;padding:13px 16px;font-size:15px;
+     border:1px solid var(--border);border-radius:var(--radius-sm);
+     background:var(--surface);color:var(--text);cursor:pointer;
+     margin-bottom:8px;line-height:1.4;transition:background .12s}
+.opt:active:not(:disabled){background:var(--bg)}
+.opt.correct{background:var(--green-l);border-color:var(--green);color:var(--green)}
+.opt.wrong{background:var(--red-l);border-color:var(--red);color:var(--red)}
+.opt.reveal{background:var(--green-l);border-color:var(--green);color:var(--green)}
+.opt.timeout{background:var(--bg);border-color:var(--border);color:var(--muted)}
 
-  /* ── feedback ── */
-  .fb { font-size: 13px; padding: 10px 14px; border-radius: var(--radius-sm);
-        margin: 8px 0; line-height: 1.5; }
-  .fb-ok  { background: var(--green-l); color: var(--green); border: 1px solid #97C459; }
-  .fb-err { background: var(--red-l);   color: var(--red);   border: 1px solid #F09595; }
+/* feedback */
+.fb{font-size:13px;padding:10px 14px;border-radius:var(--radius-sm);
+    margin:8px 0;line-height:1.5}
+.fb-ok{background:var(--green-l);color:var(--green);border:1px solid #97C459}
+.fb-err{background:var(--red-l);color:var(--red);border:1px solid #F09595}
+.fb-timeout{background:var(--amber-l);color:var(--amber);border:1px solid #FAC775}
 
-  /* ── progress ── */
-  .prog-bg   { background: var(--bg); border-radius: 99px; height: 6px; margin: 6px 0 14px; }
-  .prog-fill { background: var(--blue); height: 6px; border-radius: 99px; transition: width .4s; }
+/* ── TIMER ── */
+.timer-wrap{margin-bottom:12px}
+.timer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.timer-num{font-size:22px;font-weight:700;min-width:36px;text-align:center;
+           font-variant-numeric:tabular-nums;transition:color .3s}
+.timer-num.urgent{color:var(--red)}
+.timer-num.warning{color:var(--amber)}
+.timer-num.ok{color:var(--blue)}
+.timer-bar-bg{flex:1;height:8px;background:var(--bg);border-radius:99px;
+              margin:0 10px;overflow:hidden;border:1px solid var(--border)}
+.timer-bar-fill{height:100%;border-radius:99px;transition:width .9s linear,background .3s}
 
-  /* ── topic pill ── */
-  .pill { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 99px;
-          background: var(--blue-l); color: var(--blue-d); border: 1px solid #B5D4F4;
-          margin-bottom: 8px; }
+/* progress */
+.prog-bg{background:var(--bg);border-radius:99px;height:5px;margin:4px 0 12px}
+.prog-fill{background:var(--blue);height:5px;border-radius:99px;transition:width .4s}
 
-  /* ── stat grid ── */
-  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem; }
-  .stat-card { background: var(--bg); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
-  .stat-val  { font-size: 22px; font-weight: 600; color: var(--blue); }
-  .stat-lbl  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+/* topic pill */
+.pill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:99px;
+      background:var(--blue-l);color:var(--blue-d);border:1px solid #B5D4F4;margin-bottom:8px}
 
-  /* ── podium ── */
-  .podium { display: flex; gap: 8px; align-items: flex-end; justify-content: center;
-            margin-bottom: 1.25rem; }
-  .podium-col { flex: 1; text-align: center; max-width: 140px; }
-  .podium-bar { border-radius: 6px 6px 0 0; display: flex; align-items: center;
-                justify-content: center; font-size: 20px; font-weight: 700; }
-  .p1 { background: var(--gold-l);   color: var(--gold);   height: 80px; }
-  .p2 { background: var(--silver-l); color: var(--silver); height: 60px; }
-  .p3 { background: var(--bronze-l); color: var(--bronze); height: 44px; }
-  .podium-name  { font-size: 12px; font-weight: 600; margin-top: 4px;
-                  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .podium-score { font-size: 11px; color: var(--muted); }
+/* stat grid */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.stat-card{background:var(--bg);border-radius:var(--radius-sm);padding:12px;text-align:center}
+.stat-val{font-size:22px;font-weight:600;color:var(--blue)}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:2px}
 
-  /* ── ranking list ── */
-  .rank-row { display: flex; justify-content: space-between; align-items: center;
-              padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
-  .rank-row:last-child { border-bottom: none; }
-  .badge { font-size: 11px; padding: 2px 7px; border-radius: 99px; margin-right: 6px; font-weight: 600; }
-  .b1 { background: var(--gold-l);   color: var(--gold); }
-  .b2 { background: var(--silver-l); color: var(--silver); }
-  .b3 { background: var(--bronze-l); color: var(--bronze); }
+/* podium */
+.podium{display:flex;gap:8px;align-items:flex-end;justify-content:center;margin-bottom:1.25rem}
+.podium-col{flex:1;text-align:center;max-width:140px}
+.podium-bar{border-radius:6px 6px 0 0;display:flex;align-items:center;
+            justify-content:center;font-size:20px;font-weight:700}
+.p1{background:var(--gold-l);color:var(--gold);height:80px}
+.p2{background:var(--silver-l);color:var(--silver);height:60px}
+.p3{background:var(--bronze-l);color:var(--bronze);height:44px}
+.podium-name{font-size:12px;font-weight:600;margin-top:4px;
+             overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.podium-score{font-size:11px;color:var(--muted)}
 
-  /* ── q stats ── */
-  .q-row { display: flex; justify-content: space-between; align-items: center;
-           padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; gap: 8px; }
-  .q-row:last-child { border-bottom: none; }
-  .bar-mini { display: inline-block; height: 7px; border-radius: 4px; background: #B5D4F4;
-              vertical-align: middle; margin-right: 4px; }
+/* ranking */
+.rank-row{display:flex;justify-content:space-between;align-items:center;
+          padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.rank-row:last-child{border-bottom:none}
+.badge{font-size:11px;padding:2px 7px;border-radius:99px;margin-right:6px;font-weight:600}
+.b1{background:var(--gold-l);color:var(--gold)}
+.b2{background:var(--silver-l);color:var(--silver)}
+.b3{background:var(--bronze-l);color:var(--bronze)}
 
-  /* ── tabs ── */
-  .tabs { display: flex; gap: 6px; margin-bottom: 10px; }
-  .tab  { font-size: 12px; padding: 5px 13px; border-radius: 99px; border: 1px solid var(--border);
-          background: var(--surface); color: var(--muted); cursor: pointer; }
-  .tab.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+/* q stats */
+.q-row{display:flex;justify-content:space-between;align-items:center;
+       padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;gap:8px}
+.q-row:last-child{border-bottom:none}
+.bar-mini{display:inline-block;height:7px;border-radius:4px;background:#B5D4F4;
+          vertical-align:middle;margin-right:4px}
 
-  /* ── loader / waiting ── */
-  .loader { text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: 14px; }
-  .big-num { font-size: 48px; font-weight: 700; color: var(--blue); text-align: center;
-             margin: 0.5rem 0; }
+/* tabs */
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tab{font-size:12px;padding:5px 13px;border-radius:99px;border:1px solid var(--border);
+     background:var(--surface);color:var(--muted);cursor:pointer}
+.tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
 
-  /* ── config screen ── */
-  .config-field { margin-bottom: 14px; }
-  .config-field label { display: block; font-size: 13px; font-weight: 500;
-                        margin-bottom: 4px; color: var(--muted); }
-  .config-field input { margin-bottom: 0; }
-  .hint { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
-  .steps { counter-reset: step; list-style: none; padding: 0; }
-  .steps li { counter-increment: step; display: flex; gap: 10px; margin-bottom: 10px;
-              font-size: 13px; line-height: 1.5; }
-  .steps li::before { content: counter(step); min-width: 22px; height: 22px;
-                       background: var(--blue); color: #fff; border-radius: 50%;
-                       display: flex; align-items: center; justify-content: center;
-                       font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-  code { background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
-         padding: 1px 5px; font-size: 12px; font-family: monospace; word-break: break-all; }
+/* loader */
+.loader{text-align:center;padding:3rem 1rem;color:var(--muted);font-size:14px}
 
-  /* ── header bar ── */
-  .topbar { background: var(--blue); color: #fff; padding: 10px 16px;
-            display: flex; align-items: center; justify-content: space-between; }
-  .topbar-title { font-size: 15px; font-weight: 600; }
-  .topbar-sub   { font-size: 11px; opacity: .8; }
+/* config */
+.config-field{margin-bottom:14px}
+.config-field label{display:block;font-size:13px;font-weight:500;margin-bottom:4px;color:var(--muted)}
+.config-field input{margin-bottom:0}
+.hint{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:10px;margin-bottom:10px;
+          font-size:13px;line-height:1.5}
+.steps li::before{content:counter(step);min-width:22px;height:22px;
+                  background:var(--blue);color:#fff;border-radius:50%;
+                  display:flex;align-items:center;justify-content:center;
+                  font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+code{background:var(--bg);border:1px solid var(--border);border-radius:4px;
+     padding:1px 5px;font-size:12px;font-family:monospace;word-break:break-all}
 
-  /* ── mode select ── */
-  .mode-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem;
-               background: var(--surface); margin-bottom: 10px; cursor: pointer;
-               display: flex; align-items: center; gap: 14px; transition: border-color .15s; }
-  .mode-card:hover { border-color: var(--blue); }
-  .mode-icon { width: 44px; height: 44px; border-radius: 10px; display: flex;
-               align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-  .icon-p { background: var(--blue-l); }
-  .icon-a { background: #F1EFE8; }
-  .mode-title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
-  .mode-desc  { font-size: 12px; color: var(--muted); }
+/* topbar */
+.topbar{background:var(--blue);color:#fff;padding:10px 16px;
+        display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-size:15px;font-weight:600}
+.topbar-sub{font-size:11px;opacity:.8}
 
-  /* ── done screen ── */
-  .done-score { font-size: 52px; font-weight: 700; color: var(--blue);
-                text-align: center; margin: 6px 0; }
-  .done-icon  { font-size: 40px; text-align: center; margin-top: 1rem; }
+/* mode select */
+.mode-card{border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;
+           background:var(--surface);margin-bottom:10px;cursor:pointer;
+           display:flex;align-items:center;gap:14px;transition:border-color .15s}
+.mode-card:hover{border-color:var(--blue)}
+.mode-icon{width:44px;height:44px;border-radius:10px;display:flex;
+           align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.icon-p{background:var(--blue-l)}.icon-a{background:#F1EFE8}
+.mode-title{font-size:15px;font-weight:600;margin-bottom:2px}
+.mode-desc{font-size:12px;color:var(--muted)}
 
-  /* ── live badge ── */
-  .live-dot { width: 8px; height: 8px; background: #E24B4A; border-radius: 50%;
-              display: inline-block; margin-right: 5px; animation: pulse 1.4s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+/* done */
+.done-score{font-size:52px;font-weight:700;color:var(--blue);text-align:center;margin:6px 0}
+.done-icon{font-size:40px;text-align:center;margin-top:1rem}
 
-  /* ── auto-refresh ── */
-  .refresh-bar { background: var(--blue-l); color: var(--blue-d); font-size: 12px;
-                 padding: 6px 12px; border-radius: var(--radius-sm); margin-bottom: 10px;
-                 display: flex; align-items: center; gap: 6px; }
+/* live */
+.live-dot{width:8px;height:8px;background:#E24B4A;border-radius:50%;
+          display:inline-block;margin-right:5px;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.refresh-bar{background:var(--blue-l);color:var(--blue-d);font-size:12px;
+             padding:6px 12px;border-radius:var(--radius-sm);margin-bottom:10px;
+             display:flex;align-items:center;gap:6px}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════
-     TELA 0 — CONFIGURAÇÃO INICIAL (primeira abertura)
-════════════════════════════════════════════════════ -->
+<!-- TELA 0 — CONFIGURAÇÃO -->
 <div id="scr-config" class="screen active">
   <div class="topbar">
-    <div>
-      <div class="topbar-title">Quiz SGD — CAvEx</div>
-      <div class="topbar-sub">Configuração inicial</div>
-    </div>
+    <div><div class="topbar-title">Quiz SGD — CAvEx</div>
+         <div class="topbar-sub">Configuração inicial</div></div>
   </div>
   <div class="wrap">
     <div class="card" style="margin-top:.5rem">
@@ -203,34 +191,32 @@
         Para funcionar online com múltiplos participantes, este quiz usa o
         Firebase Realtime Database (gratuito). Siga os passos abaixo uma única vez.
       </p>
-
       <ol class="steps">
         <li>Acesse <strong>console.firebase.google.com</strong> e crie um projeto gratuito.</li>
         <li>No menu lateral, clique em <strong>Realtime Database → Criar banco de dados</strong>.
-            Escolha qualquer região e inicie em <em>modo de teste</em> (regras abertas por 30 dias).</li>
-        <li>Clique na engrenagem (⚙) → <strong>Configurações do projeto → Seus apps → Web (&lt;/&gt;)</strong>.
+            Escolha qualquer região e inicie em <em>modo de teste</em>.</li>
+        <li>Clique na engrenagem ⚙ → <strong>Configurações do projeto → Seus apps → Web</strong>.
             Registre o app e copie os dados de configuração.</li>
         <li>Cole os valores nos campos abaixo e clique em <strong>Salvar e entrar</strong>.</li>
       </ol>
     </div>
-
     <div class="card">
       <div class="config-field">
         <label>apiKey</label>
-        <input type="text" id="cfg-apiKey" placeholder="AIzaSy..." />
+        <input type="text" id="cfg-apiKey" placeholder="AIzaSy…"/>
       </div>
       <div class="config-field">
         <label>authDomain</label>
-        <input type="text" id="cfg-authDomain" placeholder="meu-projeto.firebaseapp.com" />
+        <input type="text" id="cfg-authDomain" placeholder="meu-projeto.firebaseapp.com"/>
       </div>
       <div class="config-field">
         <label>databaseURL</label>
-        <input type="text" id="cfg-dbURL" placeholder="https://meu-projeto-default-rtdb.firebaseio.com" />
+        <input type="text" id="cfg-dbURL" placeholder="https://meu-projeto-default-rtdb.firebaseio.com"/>
         <div class="hint">⚠️ Campo obrigatório — sem isso o banco de dados não funciona.</div>
       </div>
       <div class="config-field">
         <label>projectId</label>
-        <input type="text" id="cfg-projectId" placeholder="meu-projeto" />
+        <input type="text" id="cfg-projectId" placeholder="meu-projeto"/>
       </div>
       <button class="btn btn-primary" onclick="saveConfig()">Salvar e entrar</button>
       <button class="btn" style="margin-top:4px" onclick="useDemoMode()">Usar modo demonstração (offline)</button>
@@ -238,60 +224,44 @@
   </div>
 </div>
 
-<!-- ═══════════════════════
-     TELA 1 — SELEÇÃO DE MODO
-════════════════════════ -->
+<!-- TELA 1 — SELEÇÃO DE MODO -->
 <div id="scr-mode" class="screen">
   <div class="topbar">
-    <div>
-      <div class="topbar-title">Quiz SGD — CAvEx</div>
-      <div class="topbar-sub">Sistema de Gestão do Desempenho</div>
-    </div>
+    <div><div class="topbar-title">Quiz SGD — CAvEx</div>
+         <div class="topbar-sub">Sistema de Gestão do Desempenho</div></div>
     <button onclick="showConfig()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer">⚙ Config</button>
   </div>
   <div class="wrap" style="margin-top:.5rem">
     <div class="mode-card" onclick="goParticipant()">
       <div class="mode-icon icon-p">🎓</div>
-      <div>
-        <div class="mode-title">Sou participante</div>
-        <div class="mode-desc">Responder as 15 questões e ver meu resultado</div>
-      </div>
+      <div><div class="mode-title">Sou participante</div>
+           <div class="mode-desc">Responder as 15 questões e ver meu resultado</div></div>
     </div>
     <div class="mode-card" onclick="goPresenter()">
       <div class="mode-icon icon-a">📊</div>
-      <div>
-        <div class="mode-title">Sou o apresentador</div>
-        <div class="mode-desc">Gerenciar a sessão e ver o placar ao vivo</div>
-      </div>
+      <div><div class="mode-title">Sou o apresentador</div>
+           <div class="mode-desc">Gerenciar a sessão e ver o placar ao vivo</div></div>
     </div>
   </div>
 </div>
 
-<!-- ═════════════════════════
-     TELA 2 — PARTICIPANTE: NOME
-══════════════════════════ -->
+<!-- TELA 2 — NOME -->
 <div id="scr-name" class="screen">
-  <div class="topbar">
-    <div class="topbar-title">Identificação</div>
-  </div>
+  <div class="topbar"><div class="topbar-title">Identificação</div></div>
   <div class="wrap" style="margin-top:.5rem">
     <div class="card">
       <h2>Como você quer ser identificado?</h2>
       <p class="muted" style="margin-bottom:1rem">Informe seu posto e nome ou apelido.</p>
-      <input type="text" id="inp-name" placeholder="Ex: Ten Rocha" maxlength="40" />
+      <input type="text" id="inp-name" placeholder="Ex: Ten Rocha" maxlength="40"/>
       <button class="btn btn-primary" onclick="joinSession()">Entrar no quiz</button>
       <button class="btn" style="margin-top:4px" onclick="show('scr-mode')">Voltar</button>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════════
-     TELA 3 — AGUARDANDO INÍCIO
-═════════════════════════ -->
+<!-- TELA 3 — AGUARDANDO -->
 <div id="scr-wait" class="screen">
-  <div class="topbar">
-    <div class="topbar-title">Aguardando início</div>
-  </div>
+  <div class="topbar"><div class="topbar-title">Aguardando início</div></div>
   <div class="wrap">
     <div class="loader">
       <div style="font-size:36px;margin-bottom:12px">⏳</div>
@@ -301,17 +271,24 @@
   </div>
 </div>
 
-<!-- ══════════════════
-     TELA 4 — QUESTÃO
-═════════════════════ -->
+<!-- TELA 4 — QUESTÃO -->
 <div id="scr-question" class="screen">
   <div class="topbar">
-    <div>
-      <div class="topbar-title" id="q-num">Questão 1 de 15</div>
-    </div>
+    <div><div class="topbar-title" id="q-num">Questão 1 de 15</div></div>
   </div>
   <div class="wrap" style="margin-top:.5rem">
     <div class="prog-bg"><div class="prog-fill" id="q-prog" style="width:0%"></div></div>
+
+    <!-- TIMER -->
+    <div class="timer-wrap">
+      <div class="timer-row">
+        <div class="timer-num ok" id="timer-num">12</div>
+        <div class="timer-bar-bg">
+          <div class="timer-bar-fill" id="timer-bar" style="width:100%;background:var(--blue)"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="pill" id="q-topic"></div>
     <div class="card">
       <p style="font-size:15px;font-weight:500;line-height:1.55;margin-bottom:1rem" id="q-text"></p>
@@ -322,13 +299,9 @@
   </div>
 </div>
 
-<!-- ══════════════════════
-     TELA 5 — CONCLUÍDO
-═══════════════════════ -->
+<!-- TELA 5 — CONCLUÍDO -->
 <div id="scr-done" class="screen">
-  <div class="topbar">
-    <div class="topbar-title">Quiz concluído!</div>
-  </div>
+  <div class="topbar"><div class="topbar-title">Quiz concluído!</div></div>
   <div class="wrap">
     <div class="card" style="text-align:center;padding:2rem">
       <div class="done-icon" id="done-icon">🏆</div>
@@ -342,23 +315,15 @@
   </div>
 </div>
 
-<!-- ════════════════════════════
-     TELA 6 — PAINEL APRESENTADOR
-═════════════════════════════ -->
+<!-- TELA 6 — APRESENTADOR -->
 <div id="scr-presenter" class="screen">
   <div class="topbar">
-    <div>
-      <div class="topbar-title">
-        <span class="live-dot"></span>Painel ao vivo
-      </div>
-      <div class="topbar-sub">Quiz SGD — CAvEx</div>
-    </div>
+    <div><div class="topbar-title"><span class="live-dot"></span>Painel ao vivo</div>
+         <div class="topbar-sub">Quiz SGD — CAvEx</div></div>
     <button onclick="loadPresenter()" style="background:none;border:none;color:#fff;font-size:11px;cursor:pointer">↺ Atualizar</button>
   </div>
   <div class="wrap" style="margin-top:.5rem">
-    <div class="refresh-bar">
-      <span>↺</span> <span id="refresh-msg">Atualiza a cada 10 s automaticamente</span>
-    </div>
+    <div class="refresh-bar"><span>↺</span><span id="refresh-msg">Atualiza a cada 10 s automaticamente</span></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem">
       <button class="btn btn-primary btn-sm" onclick="activateSession()">▶ Iniciar / reabrir</button>
       <button class="btn btn-danger btn-sm" onclick="resetSession()">🗑 Zerar sessão</button>
@@ -375,264 +340,334 @@
   </div>
 </div>
 
-<!-- ═══════ FIREBASE + LÓGICA ═══════ -->
 <script>
-// ── questões ──────────────────────────────────────────────────
+// ── QUESTÕES ──────────────────────────────────────────────────
 const QS = [
-  {topic:"Conceito e objetivos",
-   q:"Qual é o principal objetivo finalístico do SGD voltado para as pessoas?",
-   opts:["Subsidiar os processos de promoção do Exército","Melhorar o desempenho profissional do militar","Gerenciar os recursos humanos da OM","Registrar faltas e punições disciplinares"],
-   ans:1, exp:"O SGD tem dois objetivos finalísticos: voltado para as pessoas, melhorar o desempenho profissional; voltado para a organização, subsidiar processos seletivos e de promoção."},
-  {topic:"Trabalho do avaliador",
-   q:"Qual é o requisito OBRIGATÓRIO para que um avaliador vertical possa avaliar um subordinado?",
-   opts:["Ser do mesmo posto ou graduação que o avaliado","Possuir vínculo funcional direto ou indireto com o avaliado","Ter sido designado formalmente em Portaria do DGP","Pertencer à mesma subunidade do avaliado"],
-   ans:1, exp:"É impositivo que o avaliador vertical possua vínculo funcional direto ou indireto com o avaliado."},
-  {topic:"Trabalho do avaliador",
-   q:"Para os três anos iniciais após a formação do militar, qual entrevista o avaliador é OBRIGADO a realizar?",
-   opts:["Entrevista de desligamento","Entrevista de acompanhamento semestral","Entrevista inicial","Entrevista de desempenho anual"],
-   ans:2, exp:"A realização da Entrevista Inicial é obrigatória nos três anos iniciais após a formação do militar."},
-  {topic:"Pautas de avaliação",
-   q:"O que significa a pauta 'NO' na Ficha de Avaliação?",
-   opts:["Nota Oficial","Não Objetiva","Não Observado","Nível Ótimo"],
-   ans:2, exp:"'NO' significa Não Observado — utilizado quando o avaliador não teve condições de observar o desempenho do avaliado naquela competência."},
-  {topic:"Pautas de avaliação",
-   q:"Em quantas competências o avaliador pode utilizar a pauta 'NO', no máximo?",
-   opts:["2 competências","3 competências","4 competências","5 competências"],
-   ans:2, exp:"Admite-se que o avaliador possa utilizar a pauta NO em até 04 (quatro) competências, excetuando-se as competências obrigatórias."},
-  {topic:"Desempenho Global",
-   q:"Quem é o ÚNICO responsável por atribuir o Desempenho Global 'Alto Desempenho'?",
-   opts:["O avaliador direto","O gestor de avaliação da OM","O homologador (Cmt/Ch/Dir)","A D A Prom"],
-   ans:2, exp:"O Alto Desempenho só pode ser atribuído exclusivamente pelo homologador, aos militares que receberam DG Superior de TODOS os seus avaliadores."},
-  {topic:"Desempenho Global",
-   q:"Qual o percentual máximo para o DG 'Alto Desempenho' por universo (oficiais e praças)?",
-   opts:["20%","25%","30%","50%"],
-   ans:2, exp:"O homologador poderá selecionar até 30% para cada universo. No processo somativo externo vertical, o limite é 50%."},
-  {topic:"Desempenho Global",
-   q:"Qual fator de multiplicação é aplicado ao DG 'Alto Desempenho' no cálculo da MPC?",
-   opts:["1,07","1,131","1,19","1,25"],
-   ans:3, exp:"O fator de multiplicação do DG Alto Desempenho é 1,25; Superior = 1,19; Adequado = 1,131; Oportunidade de Melhoria = 1,07."},
-  {topic:"Perfil do militar",
-   q:"Quantos anos de avaliação somativa compõem o Perfil de Desempenho do militar?",
-   opts:["5 últimos anos","8 últimos anos","10 últimos anos","Todo o histórico de avaliações"],
-   ans:2, exp:"Os últimos 10 anos de avaliação somativa compõem o Perfil do militar."},
-  {topic:"Trabalho do homologador",
-   q:"O que o homologador NÃO pode fazer diretamente no SGD?",
-   opts:["Homologar a ficha de avaliação","Devolver a FA ao avaliador para revisão","Modificar diretamente a avaliação feita por outro avaliador","Desconsiderar a FA total ou parcialmente"],
-   ans:2, exp:"O sistema NÃO permite que o homologador modifique avaliação realizada por outro avaliador."},
-  {topic:"Integrantes do SGD",
-   q:"Qual órgão é encarregado de planejar, supervisionar e aprimorar o SGD?",
-   opts:["Diretoria de Pessoal (DP)","Diretoria de Avaliação e Promoções (D A Prom)","Diretoria de Saúde e Assistência Social","Seção de Inativos e Pensionistas (SI)"],
-   ans:1, exp:"A Diretoria de Avaliação e Promoções (D A Prom) é encarregada de planejar, supervisionar, processar, controlar e aprimorar o SGD."},
-  {topic:"Trabalho do avaliador",
-   q:"Ao registrar pauta '1' ou '2' para uma competência, o que o avaliador é OBRIGADO a fazer?",
-   opts:["Comunicar ao gestor OM antes de salvar","Justificar com fatos e comportamentos do avaliado","Solicitar autorização prévia do homologador","Aplicar a mesma pauta em outras duas competências"],
-   ans:1, exp:"Caso o avaliador registre pauta '1' e/ou '2', deverá obrigatoriamente justificar com fatos e comportamentos do militar avaliado."},
-  {topic:"Trabalho do avaliado",
-   q:"O que o avaliado pode fazer ao receber resultado com o qual não concorda?",
-   opts:["Solicitar diretamente à D A Prom revisão da avaliação","Registrar considerações em cada competência na FA, enviadas ao homologador","Solicitar ao gestor OM a exclusão da ficha","Recusar-se a clicar em 'ciente' para impedir a homologação"],
-   ans:1, exp:"O avaliado poderá registrar observações na FA. Ao salvar, o registro é enviado ao homologador. Após, deve clicar em 'ciente' para liberar a FA para homologação."},
-  {topic:"Diagnóstico Pessoal",
-   q:"Qual é a finalidade principal do Diagnóstico Pessoal (1ª etapa do SGD)?",
-   opts:["Pontuar o militar para fins de promoção","Proporcionar ao avaliador conhecimento do perfil profissional do avaliado","Registrar as punições do avaliado","Calcular a média das competências"],
-   ans:1, exp:"O Diagnóstico Pessoal tem por finalidade proporcionar ao avaliador um melhor conhecimento do perfil profissional do avaliado."},
-  {topic:"Trabalho do avaliador",
-   q:"Após concluir a Avaliação Somativa (SIV/SEV), qual é o procedimento correto do avaliador?",
-   opts:["Imprimir e assinar a FA e entregar ao avaliado pessoalmente","Encaminhar a FA ao homologador pelo SGD e poderá informar o avaliado","Enviar a FA diretamente à D A Prom para processamento","Aguardar o avaliado clicar em 'ciente' antes de enviar ao homologador"],
-   ans:1, exp:"Realizada a Avaliação SIV/SEV, o avaliador encaminha as FA ao homologador pelo sistema e poderá informar ao avaliado para que este possa verificar e, se quiser, registrar considerações."}
+  {
+    topic:"Conceito e objetivos",
+    q:"Qual é o principal objetivo finalístico do SGD voltado para as pessoas?",
+    opts:["Subsidiar os processos de promoção do Exército","Melhorar o desempenho profissional do militar","Gerenciar os recursos humanos da OM","Registrar faltas e punições disciplinares"],
+    ans:1,
+    exp:"O SGD tem dois objetivos finalísticos: voltado para as pessoas, melhorar o desempenho profissional; voltado para a organização, subsidiar os processos seletivos e de promoção."
+  },
+  {
+    topic:"Erros de avaliação",
+    q:"Um avaliador atribui a mesma pauta elevada a todas as competências de um avaliado por ter uma impressão geral positiva sobre ele, sem analisar cada competência individualmente. Que erro é esse?",
+    opts:["Leniência","Tendência Central","Severidade","Efeito de Halo"],
+    ans:3,
+    exp:"Efeito de Halo é avaliar segundo uma imagem geral formada sobre o avaliado, sem atentar para o desempenho em cada competência especificamente — conforme art. 50, inciso I, da EB30-IR-60.007."
+  },
+  {
+    topic:"Trabalho do avaliador",
+    q:"Para os três anos iniciais após a formação do militar, qual entrevista o avaliador é OBRIGADO a realizar?",
+    opts:["Entrevista de desligamento","Entrevista de acompanhamento semestral","Entrevista inicial","Entrevista de desempenho anual"],
+    ans:2,
+    exp:"A realização da Entrevista Inicial é obrigatória nos três anos iniciais após a formação do militar, com a finalidade de orientá-lo quanto ao processo de avaliação e ao seu desenvolvimento profissional."
+  },
+  {
+    topic:"Pautas de avaliação",
+    q:"O que significa a pauta 'NO' na Ficha de Avaliação?",
+    opts:["Nota Oficial","Não Objetiva","Não Observado","Nível Ótimo"],
+    ans:2,
+    exp:"'NO' significa Não Observado — utilizado quando o avaliador não teve condições de observar o desempenho do avaliado naquela competência. O NO não interfere nos cálculos do processamento."
+  },
+  {
+    topic:"Pautas de avaliação",
+    q:"Em quantas competências o avaliador pode utilizar a pauta 'NO', no máximo?",
+    opts:["2 competências","3 competências","4 competências","5 competências"],
+    ans:2,
+    exp:"Admite-se que o avaliador possa utilizar a pauta NO em até 04 (quatro) competências, excetuando-se as competências obrigatórias descritas nos incisos I a VIII do art. 9º das IR."
+  },
+  {
+    topic:"Desempenho Global",
+    q:"Quem é o ÚNICO responsável por atribuir o Desempenho Global 'Alto Desempenho'?",
+    opts:["O avaliador direto","O gestor de avaliação da OM","O homologador (Cmt/Ch/Dir)","A D A Prom"],
+    ans:2,
+    exp:"O Alto Desempenho só pode ser atribuído exclusivamente pelo homologador, aos militares que receberam DG Superior de TODOS os seus avaliadores."
+  },
+  {
+    topic:"Desempenho Global",
+    q:"Qual o percentual máximo de militares que o homologador pode selecionar para o DG 'Alto Desempenho', por universo (oficiais e praças)?",
+    opts:["20%","25%","30%","50%"],
+    ans:2,
+    exp:"O homologador poderá selecionar até 30% para cada universo (oficiais e praças). No processo somativo externo vertical, o limite é 50%."
+  },
+  {
+    topic:"Desempenho Global",
+    q:"Qual fator de multiplicação é aplicado ao DG 'Alto Desempenho' no cálculo da MPC?",
+    opts:["1,07","1,131","1,19","1,25"],
+    ans:3,
+    exp:"O fator de multiplicação do DG Alto Desempenho é 1,25; Superior = 1,19; Adequado = 1,131; Oportunidade de Melhoria = 1,07, conforme a EB30-N-60.005."
+  },
+  {
+    topic:"Perfil do militar",
+    q:"Quantos anos de avaliação somativa compõem o Perfil de Desempenho do militar?",
+    opts:["5 últimos anos","8 últimos anos","10 últimos anos","Todo o histórico de avaliações"],
+    ans:2,
+    exp:"Os últimos 10 anos de avaliação somativa compõem o Perfil do militar, utilizado para subsidiar processos de promoção e seleção."
+  },
+  {
+    topic:"Trabalho do homologador",
+    q:"O que o homologador NÃO pode fazer diretamente no SGD?",
+    opts:["Homologar a ficha de avaliação","Devolver a FA ao avaliador para revisão","Modificar diretamente a avaliação feita por outro avaliador","Desconsiderar a FA total ou parcialmente"],
+    ans:2,
+    exp:"O sistema NÃO permite que o homologador modifique avaliação realizada por outro avaliador. Ele pode homologar, devolver, desconsiderar ou designar outro avaliador."
+  },
+  {
+    topic:"Mapa de Indicadores",
+    q:"O Mapa de Indicadores, elaborado pela D A Prom com base no SGD, apoia processos seletivos. Qual conjunto representa corretamente processos para os quais o mapa pode ser elaborado?",
+    opts:[
+      "Promoção por antiguidade, LTIP e transferência para a reserva",
+      "Concessão de férias, afastamento para tratamento de saúde e dispensa de atividades",
+      "Missões no exterior, primeiro comando de OM, medalhas e condecorações, movimentação de pessoal e adjunto de comando",
+      "Aplicação de punições disciplinares, instauração de IPM e sindicância"
+    ],
+    ans:2,
+    exp:"Conforme art. 19 da EB30-N-60.037, os mapas de indicadores apoiam processos como missões no exterior, primeiro e segundo comandos de OM, concessão de medalhas e condecorações, movimentação de pessoal e adjunto de comando — com base em dados do SGD, SVM e BDCP."
+  },
+  {
+    topic:"Trabalho do avaliador",
+    q:"Ao registrar pauta '1' ou '2' para uma competência, o que o avaliador é OBRIGADO a fazer?",
+    opts:["Comunicar ao gestor OM antes de salvar","Justificar com fatos e comportamentos do avaliado","Solicitar autorização prévia do homologador","Aplicar a mesma pauta em outras duas competências"],
+    ans:1,
+    exp:"Caso o avaliador registre pauta '1' e/ou '2', deverá obrigatoriamente justificar com fatos e comportamentos do militar avaliado, fundamentando a avaliação de forma precisa e imparcial."
+  },
+  {
+    topic:"Trabalho do avaliado",
+    q:"O que o avaliado pode fazer ao receber resultado com o qual não concorda?",
+    opts:["Solicitar diretamente à D A Prom revisão da avaliação","Registrar considerações em cada competência na FA, que serão enviadas ao homologador","Solicitar ao gestor OM a exclusão da ficha","Recusar-se a clicar em 'ciente' para impedir a homologação"],
+    ans:1,
+    exp:"O avaliado poderá registrar observações na FA em cada competência. Ao salvar, o registro é enviado ao homologador. Após, deve clicar em 'ciente' para liberar a FA para homologação."
+  },
+  {
+    topic:"Diagnóstico Pessoal",
+    q:"Qual é a finalidade principal do Diagnóstico Pessoal — 1ª etapa do SGD?",
+    opts:["Pontuar o militar para fins de promoção","Proporcionar ao avaliador conhecimento do perfil profissional do avaliado","Registrar as punições do avaliado","Calcular a média das competências"],
+    ans:1,
+    exp:"O Diagnóstico Pessoal tem por finalidade proporcionar ao avaliador um melhor conhecimento do perfil profissional do avaliado, por meio da Ficha de Diagnóstico Pessoal e da Ficha de Autoavaliação."
+  },
+  {
+    topic:"Trabalho do avaliador",
+    q:"Após concluir a Avaliação Somativa (SIV/SEV), qual é o procedimento correto do avaliador?",
+    opts:["Imprimir e assinar a FA e entregar ao avaliado pessoalmente","Encaminhar a FA ao homologador pelo SGD e poderá informar o avaliado","Enviar a FA diretamente à D A Prom para processamento","Aguardar o avaliado clicar em 'ciente' antes de enviar ao homologador"],
+    ans:1,
+    exp:"Realizada a Avaliação SIV/SEV, o avaliador encaminha as FA ao homologador pelo sistema e poderá informar ao avaliado, para que este possa verificar e, se quiser, registrar considerações antes de clicar em 'ciente'."
+  }
 ];
 
-// ── estado ────────────────────────────────────────────────────
-let db = null;
-let playerName = '';
-let playerAnswers = [];
-let curQ = 0;
-let answered = false;
-let presenterInterval = null;
-let demoMode = false;
-let demoData = { active: false, players: {} };
+const TIMER_SECS = 12;
 
-// ── helpers de tela ───────────────────────────────────────────
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+// ── ESTADO ───────────────────────────────────────────────────
+let db = null, demoMode = false, demoData = {active:false,players:{}};
+let playerName = '', playerAnswers = [], curQ = 0, answered = false;
+let timerInterval = null, timerLeft = TIMER_SECS;
+let presenterInterval = null;
+
+// ── TELAS ────────────────────────────────────────────────────
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// ── config / firebase ─────────────────────────────────────────
-function loadStoredConfig() {
-  try {
-    const c = localStorage.getItem('sgd_fb_config');
-    return c ? JSON.parse(c) : null;
-  } catch(e) { return null; }
+// ── FIREBASE ─────────────────────────────────────────────────
+function loadStoredConfig(){
+  try{const c=localStorage.getItem('sgd_fb_config');return c?JSON.parse(c):null;}
+  catch(e){return null;}
 }
-
-function initFirebase(cfg) {
-  try {
-    if (firebase.apps.length) firebase.apps.forEach(a => a.delete());
+function initFirebase(cfg){
+  try{
+    if(firebase.apps.length)firebase.apps.forEach(a=>a.delete());
     firebase.initializeApp(cfg);
-    db = firebase.database();
+    db=firebase.database();
     return true;
-  } catch(e) { return false; }
+  }catch(e){return false;}
 }
-
-function saveConfig() {
-  const cfg = {
-    apiKey:      document.getElementById('cfg-apiKey').value.trim(),
-    authDomain:  document.getElementById('cfg-authDomain').value.trim(),
-    databaseURL: document.getElementById('cfg-dbURL').value.trim(),
-    projectId:   document.getElementById('cfg-projectId').value.trim(),
+function saveConfig(){
+  const cfg={
+    apiKey:     document.getElementById('cfg-apiKey').value.trim(),
+    authDomain: document.getElementById('cfg-authDomain').value.trim(),
+    databaseURL:document.getElementById('cfg-dbURL').value.trim(),
+    projectId:  document.getElementById('cfg-projectId').value.trim(),
   };
-  if (!cfg.databaseURL) { alert('O campo databaseURL é obrigatório.'); return; }
-  if (!initFirebase(cfg)) { alert('Erro ao conectar. Verifique os dados.'); return; }
-  localStorage.setItem('sgd_fb_config', JSON.stringify(cfg));
+  if(!cfg.databaseURL){alert('O campo databaseURL é obrigatório.');return;}
+  if(!initFirebase(cfg)){alert('Erro ao conectar. Verifique os dados.');return;}
+  localStorage.setItem('sgd_fb_config',JSON.stringify(cfg));
   show('scr-mode');
 }
+function showConfig(){show('scr-config');}
+function useDemoMode(){demoMode=true;show('scr-mode');}
 
-function showConfig() { show('scr-config'); }
-
-function useDemoMode() {
-  demoMode = true;
-  show('scr-mode');
-}
-
-// ── firebase helpers ──────────────────────────────────────────
-async function fbGet(path) {
-  if (demoMode) {
-    const parts = path.split('/').filter(Boolean);
-    let obj = demoData;
-    for (const p of parts) obj = obj ? obj[p] : null;
-    return obj !== undefined ? obj : null;
+async function fbGet(path){
+  if(demoMode){
+    const parts=path.split('/').filter(Boolean);
+    let obj=demoData;
+    for(const p of parts)obj=obj?obj[p]:null;
+    return obj!==undefined?obj:null;
   }
-  const snap = await db.ref(path).get();
-  return snap.exists() ? snap.val() : null;
+  const snap=await db.ref(path).get();
+  return snap.exists()?snap.val():null;
 }
-
-async function fbSet(path, val) {
-  if (demoMode) {
-    const parts = path.split('/').filter(Boolean);
-    let obj = demoData;
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (!obj[parts[i]]) obj[parts[i]] = {};
-      obj = obj[parts[i]];
-    }
-    obj[parts[parts.length-1]] = val;
-    return;
+async function fbSet(path,val){
+  if(demoMode){
+    const parts=path.split('/').filter(Boolean);
+    let obj=demoData;
+    for(let i=0;i<parts.length-1;i++){if(!obj[parts[i]])obj[parts[i]]={};obj=obj[parts[i]];}
+    obj[parts[parts.length-1]]=val;return;
   }
   await db.ref(path).set(val);
 }
 
-async function fbUpdate(path, val) {
-  if (demoMode) { await fbSet(path, val); return; }
-  await db.ref(path).update(val);
-}
+// ── PARTICIPANTE ──────────────────────────────────────────────
+function goParticipant(){show('scr-name');setTimeout(()=>{const i=document.getElementById('inp-name');if(i)i.focus();},100);}
 
-// ── participante ──────────────────────────────────────────────
-function goParticipant() { show('scr-name'); setTimeout(()=>{ const i=document.getElementById('inp-name'); if(i)i.focus(); },100); }
-
-async function joinSession() {
-  const nm = (document.getElementById('inp-name').value||'').trim();
-  if (!nm) { alert('Informe seu nome antes de continuar.'); return; }
-  playerName = nm;
-  const active = await fbGet('quiz/active');
-  if (!active) { show('scr-wait'); pollWait(); return; }
-  curQ = 0; playerAnswers = [];
+async function joinSession(){
+  const nm=(document.getElementById('inp-name').value||'').trim();
+  if(!nm){alert('Informe seu nome antes de continuar.');return;}
+  playerName=nm;
+  const active=await fbGet('quiz/active');
+  if(!active){show('scr-wait');pollWait();return;}
+  curQ=0;playerAnswers=[];
   renderQuestion();
 }
-
-function pollWait() {
-  const iv = setInterval(async () => {
-    const active = await fbGet('quiz/active');
-    if (active) { clearInterval(iv); curQ = 0; playerAnswers = []; renderQuestion(); }
-  }, 4000);
+function pollWait(){
+  const iv=setInterval(async()=>{
+    const active=await fbGet('quiz/active');
+    if(active){clearInterval(iv);curQ=0;playerAnswers=[];renderQuestion();}
+  },4000);
 }
 
-function renderQuestion() {
-  if (curQ >= QS.length) { finishQuiz(); return; }
-  const q = QS[curQ];
-  answered = false;
-  document.getElementById('q-num').textContent = `Questão ${curQ+1} de ${QS.length}`;
-  document.getElementById('q-prog').style.width = Math.round((curQ/QS.length)*100) + '%';
-  document.getElementById('q-topic').textContent = q.topic;
-  document.getElementById('q-text').textContent = q.q;
-  document.getElementById('q-fb').innerHTML = '';
-  document.getElementById('q-nav').innerHTML = '';
-  document.getElementById('q-opts').innerHTML = q.opts.map((o,i) =>
+// ── TIMER ─────────────────────────────────────────────────────
+function startTimer(){
+  stopTimer();
+  timerLeft=TIMER_SECS;
+  updateTimerUI();
+  timerInterval=setInterval(()=>{
+    timerLeft--;
+    updateTimerUI();
+    if(timerLeft<=0){stopTimer();onTimeout();}
+  },1000);
+}
+function stopTimer(){
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+}
+function updateTimerUI(){
+  const numEl=document.getElementById('timer-num');
+  const barEl=document.getElementById('timer-bar');
+  if(!numEl||!barEl)return;
+  const pct=Math.round((timerLeft/TIMER_SECS)*100);
+  numEl.textContent=timerLeft;
+  numEl.className='timer-num '+(timerLeft<=3?'urgent':timerLeft<=6?'warning':'ok');
+  barEl.style.width=pct+'%';
+  barEl.style.background=timerLeft<=3?'var(--red)':timerLeft<=6?'#EF9F27':'var(--blue)';
+}
+async function onTimeout(){
+  if(answered)return;
+  answered=true;
+  playerAnswers.push(-1);
+  document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;b.classList.add('timeout');});
+  const q=QS[curQ];
+  document.getElementById('q-opts').querySelectorAll('.opt')[q.ans].classList.remove('timeout');
+  document.getElementById('q-opts').querySelectorAll('.opt')[q.ans].classList.add('reveal');
+  document.getElementById('q-fb').innerHTML=
+    `<div class="fb fb-timeout">⏱ Tempo esgotado! <strong>Resposta correta: ${String.fromCharCode(65+q.ans)})</strong> ${q.exp}</div>`;
+  document.getElementById('q-nav').innerHTML=
+    `<div style="text-align:right;margin-top:10px">
+       <button class="btn btn-primary btn-sm" onclick="nextQ()">
+         ${curQ<QS.length-1?'Próxima →':'Ver resultado'}
+       </button>
+     </div>`;
+  if(curQ===QS.length-1){await saveResult();}
+}
+
+// ── QUESTÃO ───────────────────────────────────────────────────
+function renderQuestion(){
+  if(curQ>=QS.length){finishQuiz();return;}
+  const q=QS[curQ];
+  answered=false;
+  document.getElementById('q-num').textContent=`Questão ${curQ+1} de ${QS.length}`;
+  document.getElementById('q-prog').style.width=Math.round((curQ/QS.length)*100)+'%';
+  document.getElementById('q-topic').textContent=q.topic;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('q-fb').innerHTML='';
+  document.getElementById('q-nav').innerHTML='';
+  document.getElementById('q-opts').innerHTML=q.opts.map((o,i)=>
     `<button class="opt" id="ob${i}" onclick="pickOpt(${i})">${String.fromCharCode(65+i)}) ${o}</button>`
   ).join('');
   show('scr-question');
+  startTimer();
 }
 
-async function pickOpt(i) {
-  if (answered) return;
-  answered = true;
-  const q = QS[curQ];
+async function pickOpt(i){
+  if(answered)return;
+  answered=true;
+  stopTimer();
+  const q=QS[curQ];
   playerAnswers.push(i);
-  document.querySelectorAll('.opt').forEach(b => b.disabled = true);
-  if (i === q.ans) {
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  if(i===q.ans){
     document.getElementById('ob'+i).classList.add('correct');
-    document.getElementById('q-fb').innerHTML = `<div class="fb fb-ok"><strong>Correto!</strong> ${q.exp}</div>`;
-  } else {
+    document.getElementById('q-fb').innerHTML=`<div class="fb fb-ok"><strong>Correto!</strong> ${q.exp}</div>`;
+  }else{
     document.getElementById('ob'+i).classList.add('wrong');
     document.getElementById('ob'+q.ans).classList.add('reveal');
-    document.getElementById('q-fb').innerHTML = `<div class="fb fb-err"><strong>Incorreto.</strong> ${q.exp}</div>`;
+    document.getElementById('q-fb').innerHTML=`<div class="fb fb-err"><strong>Incorreto.</strong> ${q.exp}</div>`;
   }
-  document.getElementById('q-nav').innerHTML =
+  document.getElementById('q-nav').innerHTML=
     `<div style="text-align:right;margin-top:10px">
        <button class="btn btn-primary btn-sm" onclick="nextQ()">
-         ${curQ < QS.length-1 ? 'Próxima →' : 'Ver resultado'}
+         ${curQ<QS.length-1?'Próxima →':'Ver resultado'}
        </button>
      </div>`;
-  if (curQ === QS.length - 1) {
-    const score = playerAnswers.filter((a,idx) => a === QS[idx].ans).length;
-    const safeKey = playerName.replace(/[.#$[\]]/g, '_');
-    await fbSet(`quiz/players/${safeKey}`, { score, answers: playerAnswers, ts: Date.now(), name: playerName });
-  }
+  if(curQ===QS.length-1){await saveResult();}
 }
 
-function nextQ() { curQ++; renderQuestion(); }
+async function saveResult(){
+  const score=playerAnswers.filter((a,idx)=>a===QS[idx].ans).length;
+  const safeKey=playerName.replace(/[.#$[\]]/g,'_');
+  await fbSet(`quiz/players/${safeKey}`,{score,answers:playerAnswers,ts:Date.now(),name:playerName});
+}
 
-async function finishQuiz() {
-  const score = playerAnswers.filter((a,idx) => a === QS[idx].ans).length;
-  const pct = Math.round((score/QS.length)*100);
-  let icon = pct>=90?'🏆':pct>=70?'✅':pct>=50?'📋':'📚';
-  document.getElementById('done-icon').textContent = icon;
-  document.getElementById('done-score').textContent = `${score}/${QS.length}`;
-  document.getElementById('done-pct').textContent = `${pct}% de aproveitamento`;
+function nextQ(){curQ++;renderQuestion();}
+
+async function finishQuiz(){
+  stopTimer();
+  const score=playerAnswers.filter((a,idx)=>a===QS[idx].ans).length;
+  const pct=Math.round((score/QS.length)*100);
+  document.getElementById('done-icon').textContent=pct>=90?'🏆':pct>=70?'✅':pct>=50?'📋':'📚';
+  document.getElementById('done-score').textContent=`${score}/${QS.length}`;
+  document.getElementById('done-pct').textContent=`${pct}% de aproveitamento`;
   show('scr-done');
 }
 
-// ── apresentador ──────────────────────────────────────────────
-async function goPresenter() {
+// ── APRESENTADOR ──────────────────────────────────────────────
+async function goPresenter(){
   show('scr-presenter');
   await loadPresenter();
-  if (presenterInterval) clearInterval(presenterInterval);
-  presenterInterval = setInterval(loadPresenter, 10000);
+  if(presenterInterval)clearInterval(presenterInterval);
+  presenterInterval=setInterval(loadPresenter,10000);
 }
 
-async function loadPresenter() {
-  const data = await fbGet('quiz') || { active: false, players: {} };
-  const players = data.players || {};
-  const entries = Object.values(players)
-    .filter(p => p && p.name)
-    .sort((a,b) => b.score - a.score);
-  const total = entries.length;
+async function loadPresenter(){
+  const data=await fbGet('quiz')||{active:false,players:{}};
+  const players=data.players||{};
+  const entries=Object.values(players).filter(p=>p&&p.name).sort((a,b)=>b.score-a.score);
+  const total=entries.length;
+  const avg=total>0?(entries.reduce((s,p)=>s+p.score,0)/total).toFixed(1):'—';
+  const approved=total>0?Math.round(entries.filter(p=>p.score>=Math.ceil(QS.length*.7)).length/total*100):0;
 
-  // stats
-  const avg = total > 0 ? (entries.reduce((s,p)=>s+p.score,0)/total).toFixed(1) : '—';
-  const approved = total > 0 ? Math.round(entries.filter(p=>p.score>=Math.ceil(QS.length*.7)).length/total*100) : 0;
-  document.getElementById('pres-stats').innerHTML = `
+  document.getElementById('pres-stats').innerHTML=`
     <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">Participantes</div></div>
     <div class="stat-card"><div class="stat-val">${avg}</div><div class="stat-lbl">Média acertos</div></div>
     <div class="stat-card"><div class="stat-val">${total>0?approved+'%':'—'}</div><div class="stat-lbl">Aprovados ≥70%</div></div>`;
 
-  // pódio
-  const top3 = entries.slice(0,3);
-  let podHtml = '<h2>Pódio</h2>';
-  if (top3.length === 0) {
-    podHtml += '<p class="muted">Aguardando participantes…</p>';
-  } else {
-    const order = top3.length===1?[0]:top3.length===2?[1,0]:[1,0,2];
-    const cls = ['p1','p2','p3'], lbl = ['1º','2º','3º'];
-    podHtml += `<div class="podium">${order.map(idx=>{
+  const top3=entries.slice(0,3);
+  let podHtml='<h2>Pódio</h2>';
+  if(top3.length===0){
+    podHtml+='<p class="muted">Aguardando participantes…</p>';
+  }else{
+    const order=top3.length===1?[0]:top3.length===2?[1,0]:[1,0,2];
+    const cls=['p1','p2','p3'],lbl=['1º','2º','3º'];
+    podHtml+=`<div class="podium">${order.map(idx=>{
       if(idx>=top3.length)return'';
       const p=top3[idx];
       return`<div class="podium-col">
@@ -642,57 +677,49 @@ async function loadPresenter() {
       </div>`;
     }).join('')}</div>`;
   }
-  document.getElementById('pres-podium').innerHTML = podHtml;
+  document.getElementById('pres-podium').innerHTML=podHtml;
 
-  // ranking
-  const rankHtml = entries.map((p,i)=>{
-    const pct = Math.round(p.score/QS.length*100);
-    const badge = i===0?`<span class="badge b1">1º</span>`:i===1?`<span class="badge b2">2º</span>`:i===2?`<span class="badge b3">3º</span>`:`<span style="font-size:12px;color:var(--muted);margin-right:6px">${i+1}º</span>`;
+  const rankHtml=entries.map((p,i)=>{
+    const pct=Math.round(p.score/QS.length*100);
+    const badge=i===0?`<span class="badge b1">1º</span>`:i===1?`<span class="badge b2">2º</span>`:i===2?`<span class="badge b3">3º</span>`:`<span style="font-size:12px;color:var(--muted);margin-right:6px">${i+1}º</span>`;
     return`<div class="rank-row"><span>${badge}${p.name}</span><span style="font-weight:600">${p.score}/${QS.length} <span class="muted">(${pct}%)</span></span></div>`;
-  }).join('') || '<p class="muted">Sem resultados ainda.</p>';
-  document.getElementById('tab-content-rank').innerHTML = `<h2 style="margin-bottom:10px">Classificação geral</h2>${rankHtml}`;
+  }).join('')||'<p class="muted">Sem resultados ainda.</p>';
+  document.getElementById('tab-content-rank').innerHTML=`<h2 style="margin-bottom:10px">Classificação geral</h2>${rankHtml}`;
 
-  // por questão
-  const qHtml = QS.map((q,qi)=>{
-    const corr = entries.filter(p=>p.answers&&p.answers[qi]===q.ans).length;
-    const pct = total>0?Math.round(corr/total*100):0;
+  const qHtml=QS.map((q,qi)=>{
+    const corr=entries.filter(p=>p.answers&&p.answers[qi]===q.ans).length;
+    const pct=total>0?Math.round(corr/total*100):0;
     return`<div class="q-row">
       <span style="flex:1;padding-right:8px"><span class="muted">Q${qi+1}</span> ${q.q.substring(0,52)}…</span>
       <span style="white-space:nowrap"><span class="bar-mini" style="width:${Math.max(4,pct*.5)}px"></span>${corr}/${total} <span class="muted">(${pct}%)</span></span>
     </div>`;
   }).join('');
-  document.getElementById('tab-content-qstats').innerHTML = `<h2 style="margin-bottom:10px">Aproveitamento por questão</h2>${qHtml}`;
-
-  document.getElementById('refresh-msg').textContent = `Última atualização: ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+  document.getElementById('tab-content-qstats').innerHTML=`<h2 style="margin-bottom:10px">Aproveitamento por questão</h2>${qHtml}`;
+  document.getElementById('refresh-msg').textContent=`Última atualização: ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
 }
 
-function switchTab(t) {
-  document.getElementById('tab-rank').className   = 'tab' + (t==='rank'   ? ' on' : '');
-  document.getElementById('tab-qstats').className = 'tab' + (t==='qstats' ? ' on' : '');
-  document.getElementById('tab-content-rank').style.display   = t==='rank'   ? 'block' : 'none';
-  document.getElementById('tab-content-qstats').style.display = t==='qstats' ? 'block' : 'none';
+function switchTab(t){
+  document.getElementById('tab-rank').className='tab'+(t==='rank'?' on':'');
+  document.getElementById('tab-qstats').className='tab'+(t==='qstats'?' on':'');
+  document.getElementById('tab-content-rank').style.display=t==='rank'?'block':'none';
+  document.getElementById('tab-content-qstats').style.display=t==='qstats'?'block':'none';
 }
-
-async function activateSession() {
-  await fbSet('quiz/active', true);
+async function activateSession(){
+  await fbSet('quiz/active',true);
   alert('Sessão ativada! Os participantes já podem responder.');
   loadPresenter();
 }
-
-async function resetSession() {
-  if (!confirm('Zerar todos os resultados desta sessão?')) return;
-  await fbSet('quiz', { active: false, players: {} });
+async function resetSession(){
+  if(!confirm('Zerar todos os resultados desta sessão?'))return;
+  await fbSet('quiz',{active:false,players:{}});
   loadPresenter();
 }
 
-// ── inicialização ─────────────────────────────────────────────
-(function init() {
-  const cfg = loadStoredConfig();
-  if (cfg && cfg.databaseURL && initFirebase(cfg)) {
-    show('scr-mode');
-  } else {
-    show('scr-config');
-  }
+// ── INIT ──────────────────────────────────────────────────────
+(function init(){
+  const cfg=loadStoredConfig();
+  if(cfg&&cfg.databaseURL&&initFirebase(cfg)){show('scr-mode');}
+  else{show('scr-config');}
 })();
 </script>
 </body>

@@ -245,6 +245,24 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;
   </div>
 </div>
 
+<!-- TELA 1b — PARTICIPANTE SEM CONFIG: pede só a databaseURL -->
+<div id="scr-db-input" class="screen">
+  <div class="topbar"><div class="topbar-title">Quiz SGD — CAvEx</div></div>
+  <div class="wrap" style="margin-top:.5rem">
+    <div class="card">
+      <h2>Conectar ao quiz</h2>
+      <p class="muted" style="margin-bottom:1rem;line-height:1.5">
+        Cole abaixo o endereço do banco de dados exibido pelo apresentador.
+      </p>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Endereço do banco (databaseURL)</div>
+      <input type="text" id="inp-dburl"
+             placeholder="https://quiz-sgd-cavex-default-rtdb.firebaseio.com"
+             style="font-size:13px"/>
+      <button class="btn btn-primary" onclick="connectParticipant()">Conectar</button>
+    </div>
+  </div>
+</div>
+
 <!-- TELA 2 — NOME -->
 <div id="scr-name" class="screen">
   <div class="topbar"><div class="topbar-title">Identificação</div></div>
@@ -254,7 +272,11 @@ code{background:var(--bg);border:1px solid var(--border);border-radius:4px;
       <p class="muted" style="margin-bottom:1rem">Informe seu posto e nome ou apelido.</p>
       <input type="text" id="inp-name" placeholder="Ex: Ten Rocha" maxlength="40"/>
       <button class="btn btn-primary" onclick="joinSession()">Entrar no quiz</button>
-      <button class="btn" style="margin-top:4px" onclick="show('scr-mode')">Voltar</button>
+      <div style="text-align:center;margin-top:1rem">
+        <a href="?apresentador" style="font-size:12px;color:var(--muted);text-decoration:none">
+          Sou o apresentador →
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -518,11 +540,25 @@ async function fbSet(path,val){
 }
 
 // ── PARTICIPANTE ──────────────────────────────────────────────
+function connectParticipant(){
+  const dburl=(document.getElementById('inp-dburl').value||'').trim();
+  if(!dburl){alert('Cole o endereço do banco de dados.');return;}
+  const autoCfg={apiKey:'auto',authDomain:'auto',databaseURL:dburl,projectId:'auto'};
+  localStorage.setItem('sgd_fb_config',JSON.stringify(autoCfg));
+  if(!initFirebase(autoCfg)){alert('Endereço inválido. Verifique e tente novamente.');return;}
+  show('scr-name');
+  setTimeout(()=>{const i=document.getElementById('inp-name');if(i)i.focus();},100);
+}
+
 function goParticipant(){show('scr-name');setTimeout(()=>{const i=document.getElementById('inp-name');if(i)i.focus();},100);}
 
 async function joinSession(){
   const nm=(document.getElementById('inp-name').value||'').trim();
   if(!nm){alert('Informe seu nome antes de continuar.');return;}
+  if(!db&&!demoMode){
+    alert('O quiz ainda não está configurado. Aguarde o apresentador ativar a sessão ou verifique sua conexão.');
+    return;
+  }
   playerName=nm;
   const active=await fbGet('quiz/active');
   if(!active){show('scr-wait');pollWait();return;}
@@ -720,9 +756,32 @@ async function resetSession(){
 
 // ── INIT ──────────────────────────────────────────────────────
 (function init(){
-  const cfg=loadStoredConfig();
-  if(cfg&&cfg.databaseURL&&initFirebase(cfg)){show('scr-mode');}
-  else{show('scr-config');}
+  const params = new URLSearchParams(window.location.search);
+  const isApresentador = params.has('apresentador');
+  const dbParam = params.get('db'); // databaseURL embutida no QR Code
+
+  // Se vier ?db=URL no link, salvar automaticamente como config mínima
+  if(dbParam && !loadStoredConfig()){
+    const autoCfg = {
+      apiKey:'auto', authDomain:'auto',
+      databaseURL: decodeURIComponent(dbParam),
+      projectId:'auto'
+    };
+    localStorage.setItem('sgd_fb_config', JSON.stringify(autoCfg));
+  }
+
+  const cfg = loadStoredConfig();
+
+  if(cfg && cfg.databaseURL && initFirebase(cfg)){
+    if(isApresentador){ show('scr-mode'); }
+    else{ show('scr-name'); } // participante vai direto para identificação
+  } else {
+    if(isApresentador){ show('scr-config'); } // apresentador configura Firebase
+    else{
+      // participante sem config: pede só a databaseURL
+      show('scr-db-input');
+    }
+  }
 })();
 </script>
 </body>
